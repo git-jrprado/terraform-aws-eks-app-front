@@ -20,9 +20,11 @@ resource "aws_cloudfront_distribution" "default" {
     }
 
     dynamic "custom_header" {
-      for_each = var.lb_cloudfront_key
+      for_each = var.lb_cloudfront_key == null ? [] : var.lb_cloudfront_key
+      content {
         name  = "fromcloudfront"
         value = var.custom_header.value
+      }
     }
   }
 
@@ -104,8 +106,8 @@ resource "aws_cloudfront_distribution" "default" {
 
     viewer_protocol_policy = "redirect-to-https"
     min_ttl                = 0
-    default_ttl            = 3600
-    max_ttl                = 86400
+    default_ttl            = var.default_ttl
+    max_ttl                = var.max_ttl
   }
 
   dynamic "ordered_cache_behavior" {
