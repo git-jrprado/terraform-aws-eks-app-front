@@ -7,8 +7,10 @@ resource "aws_route53_record" "hostname" {
 
   zone_id = data.aws_route53_zone.selected.zone_id
   name    = var.hostnames[count.index]
-  type    = "CNAME"
-  ttl     = "300"
-  records = list(element(aws_cloudfront_distribution.default.*.domain_name, 0))
+  type    = "A"
+  alias {
+    name                   = aws_cloudfront_distribution.default.domain_name
+    zone_id                = aws_cloudfront_distribution.default.hosted_zone_id
+    evaluate_target_health = true
+  }
 }
-
